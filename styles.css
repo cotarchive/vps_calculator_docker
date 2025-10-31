@@ -297,6 +297,26 @@ button i {
     font-size: inherit;
 }
 
+/* 结果区域按钮组 */
+.result-header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.result-header-actions md-icon-button {
+    --md-icon-button-state-layer-shape: 50%;
+    transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.result-header-actions md-icon-button:hover {
+    transform: scale(1.1);
+}
+
+.result-header-actions md-icon-button:active {
+    transform: scale(0.95);
+}
+
 /* 结果网格样式 */
 .result-grid {
     display: grid;
@@ -408,58 +428,31 @@ footer {
     --md-chip-label-text-color: var(--md-sys-color-on-surface-variant);
 }
 
-/* Material Design 3 通知样式 */
-#notifications {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 12px;
-    z-index: 1000;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding-right: 5px;
+/* Material Design 3 Snackbar 样式 */
+md-snackbar {
+    --md-snackbar-container-shape: 4px;
+    --md-snackbar-supporting-text-color: var(--md-sys-color-on-surface);
 }
 
-.notification {
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-weight: 500;
-    opacity: 0;
-    transition: all 0.3s ease;
-    min-width: 200px;
-    max-width: 320px;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+/* Snackbar 类型样式 */
+md-snackbar.success {
+    --md-snackbar-container-color: var(--md-sys-color-success-container);
+    --md-snackbar-supporting-text-color: var(--md-sys-color-on-success-container);
 }
 
-.notification.show {
-    opacity: 1;
-    transform: translateY(0);
+md-snackbar.error {
+    --md-snackbar-container-color: var(--md-sys-color-error-container);
+    --md-snackbar-supporting-text-color: var(--md-sys-color-on-error-container);
 }
 
-.notification.success {
-    background-color: var(--md-sys-color-success-container);
-    color: var(--md-sys-color-on-success-container);
-    box-shadow: var(--md-elevation--2);
+md-snackbar.warning {
+    --md-snackbar-container-color: #fef7e0;
+    --md-snackbar-supporting-text-color: #7c2d12;
 }
 
-.notification.error {
-    background-color: var(--md-sys-color-error-container);
-    color: var(--md-sys-color-on-error-container);
-    box-shadow: var(--md-elevation--2);
-}
-
-.notification.warning {
-    background-color: #fef7e0;
-    color: #7c2d12;
-    box-shadow: var(--md-elevation--2);
-}
-
-[data-theme="dark"] .notification.warning {
-    background-color: #451a03;
-    color: #fed7aa;
+[data-theme="dark"] md-snackbar.warning {
+    --md-snackbar-container-color: #451a03;
+    --md-snackbar-supporting-text-color: #fed7aa;
 }
 
 /* Flatpickr 暗黑模式 */
@@ -705,25 +698,6 @@ footer {
         transform: scale(0.98);
     }
 
-    /* 通知 */
-    #notifications {
-        bottom: 10px;
-        right: 10px;
-        left: 10px;
-        align-items: center;
-    }
-
-    .notification {
-        width: 100%;
-        max-width: 100%;
-        bottom: 10px;
-        left: 10px;
-        right: 10px;
-        text-align: center;
-        font-size: 0.9rem;
-        padding: 12px;
-    }
-
     /* 侧边栏 */
     .settings-sidebar {
         width: 100%;
@@ -802,52 +776,6 @@ footer {
 .copy-icon:active {
     transform: scale(0.95);
 }
-
-
-/* 结果区域标题栏样式 */
-.result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    position: relative;
-}
-
-/* 截图按钮样式 */
-.screenshot-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: transparent;
-    color: var(--primary-color);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-    padding: 0;
-    box-shadow: none;
-    position: absolute;
-    right: 35px;
-    top: 38px;
-    line-height: 1;
-}
-
-.screenshot-btn:hover {
-    background-color: transparent;
-    transform: scale(1.1);
-    box-shadow: none;
-    color: var(--secondary-color);
-}
-
-.screenshot-btn i {
-    font-size: 1.2rem;
-    display: block;
-    margin: 0;
-    padding: 0;
-}
-
 
 /* 设置侧边栏样式 */
 .sidebar-overlay {

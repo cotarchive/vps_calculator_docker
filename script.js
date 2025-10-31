@@ -238,6 +238,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // 初始化 DOM 缓存
         initDOMCache();
 
+        // 初始化 Material Design 3 Snackbar
+        NotificationQueue.init();
+
         // 初始化主题
         initTheme();
 
@@ -788,55 +791,75 @@ function fallbackCopyToClipboard(text) {
 }
 
 /**
- * 显示通知消息
+ * Material Design 3 Snackbar 通知系统
+ * 使用队列管理多个通知，确保通知按顺序显示
+ */
+const NotificationQueue = {
+    queue: [],
+    isShowing: false,
+    snackbar: null,
+
+    /**
+     * 初始化 Snackbar
+     */
+    init() {
+        this.snackbar = document.getElementById('snackbar');
+        if (!this.snackbar) {
+            console.error('Snackbar element not found');
+            return;
+        }
+
+        // 监听 Snackbar 关闭事件，显示下一个通知
+        this.snackbar.addEventListener('closed', () => {
+            this.isShowing = false;
+            this.showNext();
+        });
+    },
+
+    /**
+     * 添加通知到队列
+     * @param {string} message - 通知消息
+     * @param {string} type - 通知类型 (success/error/warning/info)
+     * @param {number} duration - 显示时长（毫秒）
+     */
+    add(message, type = 'info', duration = 3000) {
+        this.queue.push({ message, type, duration });
+        if (!this.isShowing) {
+            this.showNext();
+        }
+    },
+
+    /**
+     * 显示队列中的下一个通知
+     */
+    showNext() {
+        if (this.queue.length === 0 || this.isShowing) {
+            return;
+        }
+
+        const { message, type, duration } = this.queue.shift();
+        this.isShowing = true;
+
+        // 设置 Snackbar 内容和样式
+        this.snackbar.textContent = message;
+        this.snackbar.timeoutMs = duration;
+
+        // 根据类型设置样式类
+        this.snackbar.classList.remove('success', 'error', 'warning', 'info');
+        this.snackbar.classList.add(type);
+
+        // 显示 Snackbar
+        this.snackbar.show();
+    }
+};
+
+/**
+ * 显示通知消息（使用 Material Design 3 Snackbar）
  * @param {string} message - 通知消息
  * @param {string} type - 通知类型 (success/error/warning/info)
  */
-function showNotification(message, type) {
-    const notifications = document.getElementById('notifications') || createNotificationsContainer();
-
-    // 限制最���通知数量
-    const MAX_NOTIFICATIONS = 5;
-    while (notifications.children.length >= MAX_NOTIFICATIONS) {
-        notifications.removeChild(notifications.lastChild);
-    }
-
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-
-    if (notifications.firstChild) {
-        notifications.insertBefore(notification, notifications.firstChild);
-    } else {
-        notifications.appendChild(notification);
-    }
-
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-        notification.classList.remove('show');
-
-        setTimeout(() => {
-            notification.remove();
-
-            if (notifications.children.length === 0) {
-                notifications.remove();
-            }
-        }, CONSTANTS.NOTIFICATION_FADE_DURATION);
-    }, CONSTANTS.NOTIFICATION_DURATION);
-}
-
-/**
- * 创建通知容器
- * @returns {HTMLElement} 通知容器元素
- */
-function createNotificationsContainer() {
-    const container = document.createElement('div');
-    container.id = 'notifications';
-    document.body.appendChild(container);
-    return container;
+function showNotification(message, type = 'info') {
+    NotificationQueue.add(message, type, CONSTANTS.NOTIFICATION_DURATION);
 }
 
 /**
