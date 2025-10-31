@@ -477,6 +477,13 @@ footer {
 md-snackbar {
     --md-snackbar-container-shape: 4px;
     --md-snackbar-supporting-text-color: var(--md-sys-color-on-surface);
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    min-width: 344px;
+    max-width: 672px;
 }
 
 /* Snackbar 类型样式 */
@@ -630,7 +637,14 @@ md-snackbar.warning {
 }
 
 /* ==================== Material Design 3 响应式设计 ==================== */
-@media (max-width: 768px) {
+/* Material Design 3 Breakpoints:
+   - Compact (手机): 0-599px
+   - Medium (平板): 600-839px
+   - Expanded (桌面): 840px+
+*/
+
+/* Compact + Medium (手机和平板) */
+@media (max-width: 839px) {
     /* 容器和布局 */
     .container {
         padding: 1rem;
@@ -649,13 +663,13 @@ md-snackbar.warning {
     /* 输入组样式 */
     .input-group {
         grid-template-columns: 1fr;
-        gap: 0.75rem;
+        gap: 1rem;
     }
 
     /* 计算器和结果区域 */
     .calculator, .result {
         padding: 1.5rem;
-        border-radius: 15px;
+        border-radius: 16px;
     }
 
     /* 标题 */
@@ -686,14 +700,14 @@ md-snackbar.warning {
 
     /* 表单元素 */
     input, select {
-        padding: 0.8rem;
+        padding: 1rem;
         font-size: 16px;
-        height: 45px;
+        height: 48px;
     }
 
     button {
-        padding: 0.8rem;
-        height: 45px;
+        padding: 1rem;
+        height: 48px;
         margin-top: 0.5rem;
     }
 
@@ -704,7 +718,7 @@ md-snackbar.warning {
     }
 
     .result-item {
-        padding: 0.8rem;
+        padding: 1rem;
     }
 
     .result-label {
@@ -749,6 +763,16 @@ md-snackbar.warning {
         right: -100%;
     }
 
+    /* Snackbar 移动端样式 */
+    md-snackbar {
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        transform: none;
+        min-width: auto;
+        max-width: none;
+    }
+
     .sidebar-header {
         padding: 1rem;
     }
@@ -769,22 +793,43 @@ md-snackbar.warning {
     }
 }
 
-/* 针对特小屏幕的额外优化 */
-@media (max-width: 320px) {
+/* Compact only (仅手机) */
+@media (max-width: 599px) {
     .container {
-        padding: 0.8rem;
+        padding: 1rem;
     }
-    
+
     h1 {
         font-size: 1.5rem;
     }
-    
+
     .calculator, .result {
         padding: 1rem;
     }
-    
+
     input, select, button {
         font-size: 14px;
+    }
+}
+
+/* Medium only (仅平板) - 优化两列布局 */
+@media (min-width: 600px) and (max-width: 839px) {
+    /* 结果网格在平板上使用两列 */
+    .result-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    /* 页脚在平板上保持水平布局 */
+    .footer-card {
+        flex-direction: row;
+        padding: 1.5rem;
+    }
+
+    /* 侧边栏在平板上使用固定宽度 */
+    .settings-sidebar {
+        width: 400px;
+        right: -400px;
     }
 }
 
@@ -807,7 +852,7 @@ md-snackbar.warning {
     transition: transform var(--md-motion-duration-short4) var(--md-motion-easing-emphasized),
                 background-color var(--md-motion-duration-short4) var(--md-motion-easing-standard),
                 opacity var(--md-motion-duration-short4) var(--md-motion-easing-standard);
-    padding: 0.25rem;
+    padding: 0.5rem;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     opacity: 0.8;
@@ -914,7 +959,7 @@ md-snackbar.warning {
     gap: 0.5rem;
     font-size: 0.875rem;
     color: var(--md-sys-color-on-surface-variant);
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     font-weight: 500;
 }
 
@@ -940,7 +985,7 @@ md-snackbar.warning {
 .help-text {
     font-size: 0.75rem;
     color: var(--md-sys-color-on-surface-variant);
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
 }
 
 
@@ -983,7 +1028,7 @@ md-snackbar.warning {
 .help-text {
     font-size: 0.75rem;
     color: var(--footer-color);
-    margin-top: 0.3rem;
+    margin-top: 0.5rem;
 }
 
 /* 单选按钮组样式 */
@@ -1033,7 +1078,7 @@ md-snackbar.warning {
 
 /* 按钮样式 */
 .primary-btn, .secondary-btn {
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 1.5rem;
     border-radius: 12px;
     font-weight: 500;
     transition: all 0.3s ease;
