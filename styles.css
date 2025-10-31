@@ -170,7 +170,7 @@ h1 {
     transition: color 0.3s ease;
 }
 
-h1 i {
+h1 .material-symbols-outlined {
     font-size: inherit;
 }
 
@@ -293,7 +293,7 @@ button i {
     margin: 0;
 }
 
-.result-header h2 i {
+.result-header h2 .material-symbols-outlined {
     font-size: inherit;
 }
 
@@ -330,7 +330,7 @@ button i {
     font-weight: 500;
 }
 
-.result-label i {
+.result-label .material-symbols-outlined {
     font-size: 1.125rem;
     color: var(--md-sys-color-primary);
     width: 1.125rem;
@@ -353,7 +353,7 @@ button i {
     color: var(--md-sys-color-on-primary-container);
 }
 
-.highlight .result-label i {
+.highlight .result-label .material-symbols-outlined {
     color: var(--md-sys-color-on-primary-container);
 }
 
@@ -398,7 +398,7 @@ footer {
     color: var(--md-sys-color-secondary);
 }
 
-.project-links a i {
+.project-links a .material-symbols-outlined {
     font-size: 1.125rem;
     width: 1.125rem;
     text-align: center;
@@ -460,23 +460,6 @@ footer {
 [data-theme="dark"] .notification.warning {
     background-color: #451a03;
     color: #fed7aa;
-}
-
-@media (max-width: 768px) {
-    #notifications {
-        bottom: 10px;
-        right: 10px;
-        left: 10px;
-        align-items: center;
-    }
-    
-    .notification {
-        width: 100%;
-        max-width: 100%;
-        text-align: center;
-        font-size: 0.9rem;
-        padding: 12px;
-    }
 }
 
 /* Flatpickr 暗黑模式 */
@@ -608,21 +591,46 @@ footer {
     background-color: var(--hover-color);
 }
 
-/* Material Design 3 响应式设计 */
+/* ==================== Material Design 3 响应式设计 ==================== */
 @media (max-width: 768px) {
+    /* 容器和布局 */
+    .container {
+        padding: 1rem;
+    }
+
     main {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .result {
         position: static;
-        margin-top: 2rem;
+        margin-top: 1.5rem;
     }
 
+    /* 输入组样式 */
     .input-group {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
 
+    /* 计算器和结果区域 */
+    .calculator, .result {
+        padding: 1.5rem;
+        border-radius: 15px;
+    }
+
+    /* 标题 */
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .result h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    /* 主题和设置按钮 */
     .theme-toggle {
         top: 1rem;
         right: 1rem;
@@ -633,6 +641,47 @@ footer {
         right: 4rem;
     }
 
+    #settingsToggle {
+        width: 36px;
+        height: 36px;
+    }
+
+    /* 表单元素 */
+    input, select {
+        padding: 0.8rem;
+        font-size: 16px;
+        height: 45px;
+    }
+
+    button {
+        padding: 0.8rem;
+        height: 45px;
+        margin-top: 0.5rem;
+    }
+
+    /* 结果网格 */
+    .result-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .result-item {
+        padding: 0.8rem;
+    }
+
+    .result-label {
+        font-size: 0.85rem;
+    }
+
+    .result-value {
+        font-size: 1.1rem;
+    }
+
+    .highlight .result-value {
+        font-size: 1.3rem;
+    }
+
+    /* 页脚 */
     .footer-card {
         flex-direction: column;
         text-align: center;
@@ -642,113 +691,62 @@ footer {
         justify-content: center;
     }
 
-    .result-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* 移动端优化 */
-@media (max-width: 768px) {
-    /* 容器padding调整 */
-    .container {
-        padding: 1rem;
-    }
-    
-    /* 标题大小调整 */
-    h1 {
-        font-size: 1.8rem;
-    }
-    
-    /* 主要内容布局 */
-    main {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    /* 计算器和结果区域调整 */
-    .calculator, .result {
-        padding: 1.5rem;
-        border-radius: 15px;
-    }
-    
-    /* 输入组样式调整 */
-    .input-group {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-    
-    /* 表单元素大小调整 */
-    input, select {
-        padding: 0.8rem;
-        font-size: 16px;
-        height: 45px;
-    }
-    
-    /* 按钮样式调整 */
-    button {
-        padding: 0.8rem;
-        height: 45px;
-        margin-top: 0.5rem;
-    }
-    
-    /* 结果区域调整 */
-    .result {
-        margin-top: 1.5rem;
-    }
-    
-    .result h2 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    /* 结果网格调整为单列 */
-    .result-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    /* 结果项样式调整 */
-    .result-item {
-        padding: 0.8rem;
-    }
-    
-    .result-label {
-        font-size: 0.85rem;
-    }
-    
-    .result-value {
-        font-size: 1.1rem;
-    }
-    
-    /* 高亮结果项调整 */
-    .highlight .result-value {
-        font-size: 1.3rem;
-    }
-}
-
-@media (max-width: 768px) {
-    button, 
-    select, 
+    /* 触摸优化 */
+    button,
+    select,
     input[type="text"],
     .result-item {
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
     }
-    
-    /* 优化触摸反馈 */
+
     button:active,
     .result-item:active {
         transform: scale(0.98);
     }
-    
-    /* 调整通知位置和大小 */
+
+    /* 通知 */
+    #notifications {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        align-items: center;
+    }
+
     .notification {
+        width: 100%;
+        max-width: 100%;
         bottom: 10px;
         left: 10px;
         right: 10px;
         text-align: center;
         font-size: 0.9rem;
         padding: 12px;
+    }
+
+    /* 侧边栏 */
+    .settings-sidebar {
+        width: 100%;
+        right: -100%;
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+    }
+
+    .sidebar-content {
+        padding: 1rem;
+    }
+
+    .sidebar-actions {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .sidebar-actions md-filled-button,
+    .sidebar-actions md-text-button {
+        width: 100%;
     }
 }
 
@@ -910,7 +908,7 @@ footer {
     gap: 0.5rem;
 }
 
-.sidebar-header h2 i {
+.sidebar-header h2 .material-symbols-outlined {
     color: var(--md-sys-color-primary);
 }
 
@@ -944,7 +942,7 @@ footer {
     font-weight: 500;
 }
 
-.radio-group-label i {
+.radio-group-label .material-symbols-outlined {
     font-size: 1.125rem;
     color: var(--md-sys-color-primary);
 }
@@ -1085,43 +1083,6 @@ footer {
     border-color: var(--text-color);
 }
 
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .settings-toggle {
-        top: 1rem;
-        right: 4rem;
-    }
-
-    #settingsToggle {
-        width: 36px;
-        height: 36px;
-    }
-
-    /* 侧边栏响应式设计 */
-    .settings-sidebar {
-        width: 100%;
-        right: -100%;
-    }
-
-    .sidebar-header {
-        padding: 1rem;
-    }
-
-    .sidebar-content {
-        padding: 1rem;
-    }
-
-    .sidebar-actions {
-        padding: 1rem;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .sidebar-actions md-filled-button,
-    .sidebar-actions md-text-button {
-        width: 100%;
-    }
-}
 
 /* Material Design 3 高价值结果动画 */
 @keyframes high-value-glow {
@@ -1143,6 +1104,7 @@ footer {
     animation: high-value-glow 2s ease-in-out infinite;
     color: var(--md-sys-color-primary) !important;
     font-weight: 700 !important;
+    will-change: transform, filter;
 }
 
 /* Material Web 组件自定义样式 */
@@ -1170,23 +1132,23 @@ md-card {
 }
 
 
-/* Font Awesome 图标在 Material Web 组件中的样式 */
-md-outlined-text-field i[slot="leading-icon"],
-md-outlined-select i[slot="leading-icon"] {
+/* Material Symbols 图标在 Material Web 组件中的样式 */
+md-outlined-text-field .material-symbols-outlined[slot="leading-icon"],
+md-outlined-select .material-symbols-outlined[slot="leading-icon"] {
     color: var(--md-sys-color-on-surface-variant);
     font-size: 1.25rem;
     width: 1.25rem;
     text-align: center;
 }
 
-md-filled-button i[slot="icon"],
-md-text-button i[slot="icon"] {
+md-filled-button .material-symbols-outlined[slot="icon"],
+md-text-button .material-symbols-outlined[slot="icon"] {
     font-size: 1.125rem;
     width: 1.125rem;
     text-align: center;
 }
 
-md-icon-button i {
+md-icon-button .material-symbols-outlined {
     font-size: 1.25rem;
     width: 1.25rem;
     text-align: center;
@@ -1209,8 +1171,8 @@ md-icon-button i {
     --md-filled-button-label-text-color: var(--md-sys-color-on-primary);
 }
 
-[data-theme="dark"] md-icon-button {
-    --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant);
+[data-theme="dark"] md-icon-button .material-symbols-outlined {
+    color: var(--md-sys-color-on-surface-variant);
 }
 
 [data-theme="dark"] md-card {

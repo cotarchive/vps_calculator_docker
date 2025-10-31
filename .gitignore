@@ -1,0 +1,14 @@
+# Material Design 优化计划文档
+MATERIAL_DESIGN_OPTIMIZATION.md
+
+# 常见系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 配置
+.vscode/
+.idea/
+
+# 临时文件
+*.tmp
+*.log
