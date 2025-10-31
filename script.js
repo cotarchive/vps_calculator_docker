@@ -792,64 +792,117 @@ function fallbackCopyToClipboard(text) {
 
 /**
  * Material Design 3 Snackbar 通知系统
- * 使用队列管理多个通知，确保通知按顺序显示
+ * 支持多个通知同时显示，新通知堆叠在旧通知上方
  */
 const NotificationQueue = {
-    queue: [],
-    isShowing: false,
-    snackbar: null,
+    container: null,
+    activeToasts: [],
 
     /**
-     * 初始化 Snackbar
+     * 初始化 Toast 容器
      */
     init() {
-        this.snackbar = document.getElementById('snackbar');
-        if (!this.snackbar) {
-            console.error('Snackbar element not found');
-            return;
-        }
+        this.container = document.getElementById('toastContainer');
 
-        // 监听 Snackbar 关闭事件，显示下一个通知
-        this.snackbar.addEventListener('closed', () => {
-            this.isShowing = false;
-            this.showNext();
-        });
+        if (!this.container) {
+            this.container = document.createElement('div');
+            this.container.id = 'toastContainer';
+            this.container.className = 'toast-container';
+            this.container.setAttribute('aria-live', 'polite');
+            this.container.setAttribute('aria-atomic', 'false');
+            document.body.appendChild(this.container);
+        }
     },
 
     /**
-     * 添加通知到队列
+     * 添加并显示通知
      * @param {string} message - 通知消息
      * @param {string} type - 通知类型 (success/error/warning/info)
      * @param {number} duration - 显示时长（毫秒）
      */
     add(message, type = 'info', duration = 3000) {
-        this.queue.push({ message, type, duration });
-        if (!this.isShowing) {
-            this.showNext();
+        if (!this.container) {
+            this.init();
         }
+
+        const safeMessage = typeof message === 'string' && message.trim() ? message.trim() : '操作已完成';
+        const safeType = typeof type === 'string' ? type.trim().toLowerCase() : 'info';
+        const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : CONSTANTS.NOTIFICATION_DURATION;
+
+        this.show({ message: safeMessage, type: safeType, duration: safeDuration });
     },
 
     /**
-     * 显示队列中的下一个通知
+     * 创建 Toast 元素
+     * @param {Object} options - Toast 配置
+     * @returns {HTMLElement} Toast 元素
      */
-    showNext() {
-        if (this.queue.length === 0 || this.isShowing) {
-            return;
-        }
+    createToast({ message, type }) {
+        const toast = document.createElement('div');
+        const normalizedType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+        toast.className = `toast toast-${normalizedType}`;
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', normalizedType === 'error' ? 'assertive' : 'polite');
 
-        const { message, type, duration } = this.queue.shift();
-        this.isShowing = true;
+        const messageWrapper = document.createElement('div');
+        messageWrapper.className = 'toast-message';
+        messageWrapper.textContent = message;
 
-        // 设置 Snackbar 内容和样式
-        this.snackbar.textContent = message;
-        this.snackbar.timeoutMs = duration;
+        toast.appendChild(messageWrapper);
 
-        // 根据类型设置样式类
-        this.snackbar.classList.remove('success', 'error', 'warning', 'info');
-        this.snackbar.classList.add(type);
+        return toast;
+    },
 
-        // 显示 Snackbar
-        this.snackbar.show();
+    /**
+     * 显示通知
+     * @param {Object} payload - 通知配置
+     */
+    show(payload) {
+        const element = this.createToast(payload);
+        const toastInfo = { element, hideTimer: null };
+
+        this.activeToasts.push(toastInfo);
+        this.container.appendChild(element);
+
+        requestAnimationFrame(() => {
+            element.classList.add('toast-visible');
+        });
+
+        const hideToast = () => {
+            if (!element || element.classList.contains('toast-hide')) {
+                return;
+            }
+            element.classList.remove('toast-visible');
+            element.classList.add('toast-hide');
+        };
+
+        const finish = () => {
+            if (!element) {
+                return;
+            }
+            element.removeEventListener('transitionend', onTransitionEnd);
+            if (element.parentNode === this.container) {
+                this.container.removeChild(element);
+            }
+            clearTimeout(toastInfo.hideTimer);
+            const index = this.activeToasts.indexOf(toastInfo);
+            if (index > -1) {
+                this.activeToasts.splice(index, 1);
+            }
+        };
+
+        const onTransitionEnd = (event) => {
+            if (event.propertyName !== 'opacity' || !element.classList.contains('toast-hide')) {
+                return;
+            }
+            finish();
+        };
+
+        element.addEventListener('transitionend', onTransitionEnd);
+
+        toastInfo.hideTimer = setTimeout(() => {
+            hideToast();
+        }, payload.duration);
     }
 };
 
