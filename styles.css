@@ -52,6 +52,28 @@
   --footer-color:      var(--md-sys-color-on-surface-variant);
   --success-text:      var(--md-sys-color-on-success);
   --error-text:        var(--md-sys-color-on-error);
+
+  /* Material Motion 缓动函数 */
+  --md-motion-easing-emphasized: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --md-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+  --md-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0.0, 0.8, 0.15);
+  --md-motion-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --md-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --md-motion-easing-standard-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Material Motion 时长 */
+  --md-motion-duration-short1: 50ms;
+  --md-motion-duration-short2: 100ms;
+  --md-motion-duration-short3: 150ms;
+  --md-motion-duration-short4: 200ms;
+  --md-motion-duration-medium1: 250ms;
+  --md-motion-duration-medium2: 300ms;
+  --md-motion-duration-medium3: 350ms;
+  --md-motion-duration-medium4: 400ms;
+  --md-motion-duration-long1: 450ms;
+  --md-motion-duration-long2: 500ms;
+  --md-motion-duration-long3: 550ms;
+  --md-motion-duration-long4: 600ms;
 }
 
 [data-theme="dark"] {
@@ -143,7 +165,8 @@ body {
     background-color: var(--md-sys-color-background);
     color: var(--md-sys-color-on-background);
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--md-motion-duration-medium2) var(--md-motion-easing-standard),
+                color var(--md-motion-duration-medium2) var(--md-motion-easing-standard);
 }
 
 /* 容器样式 */
@@ -167,7 +190,7 @@ h1 {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    transition: color 0.3s ease;
+    transition: color var(--md-motion-duration-medium2) var(--md-motion-easing-standard);
 }
 
 h1 .material-symbols-outlined {
@@ -186,7 +209,7 @@ main {
     background-color: var(--md-sys-color-surface-container);
     border-radius: 24px;
     padding: 2rem;
-    transition: all 0.3s ease, background-color 0.3s ease;
+    transition: background-color var(--md-motion-duration-medium2) var(--md-motion-easing-standard);
 }
 
 /* 结果区域特定样式 */
@@ -250,7 +273,7 @@ input:focus, select:focus {
     position: absolute;
     bottom: -1rem;
     left: 0;
-    transition: color 0.3s ease;
+    transition: color var(--md-motion-duration-medium2) var(--md-motion-easing-standard);
 }
 
 /* 按钮样式 */
@@ -264,7 +287,8 @@ button {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    transition: all 0.3s ease, background-color 0.3s ease;
+    transition: background-color var(--md-motion-duration-short4) var(--md-motion-easing-standard),
+                transform var(--md-motion-duration-short4) var(--md-motion-easing-emphasized);
 }
 
 button:hover {
@@ -306,7 +330,7 @@ button i {
 
 .result-header-actions md-icon-button {
     --md-icon-button-state-layer-shape: 50%;
-    transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition: transform var(--md-motion-duration-short4) var(--md-motion-easing-standard);
 }
 
 .result-header-actions md-icon-button:hover {
@@ -327,8 +351,29 @@ button i {
 /* 结果项样式 - Material Design Cards */
 .result-item {
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: transform var(--md-motion-duration-short4) var(--md-motion-easing-standard);
     --md-card-container-color: var(--md-sys-color-surface-container-highest);
+    opacity: 0;
+    animation: cardFadeIn var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized-decelerate) forwards;
+}
+
+/* 结果卡片交错动画 */
+.result-item:nth-child(1) { animation-delay: 0ms; }
+.result-item:nth-child(2) { animation-delay: 50ms; }
+.result-item:nth-child(3) { animation-delay: 100ms; }
+.result-item:nth-child(4) { animation-delay: 150ms; }
+.result-item:nth-child(5) { animation-delay: 200ms; }
+.result-item:nth-child(6) { animation-delay: 250ms; }
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .result-item:hover {
@@ -411,7 +456,7 @@ footer {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: color 0.3s ease;
+    transition: color var(--md-motion-duration-short4) var(--md-motion-easing-standard);
 }
 
 .project-links a:hover {
@@ -759,7 +804,9 @@ md-snackbar.warning {
     color: var(--md-sys-color-on-primary-container);
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform var(--md-motion-duration-short4) var(--md-motion-easing-emphasized),
+                background-color var(--md-motion-duration-short4) var(--md-motion-easing-standard),
+                opacity var(--md-motion-duration-short4) var(--md-motion-easing-standard);
     padding: 0.25rem;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -788,7 +835,8 @@ md-snackbar.warning {
     z-index: 999;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized),
+                visibility var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized);
 }
 
 .sidebar-overlay.active {
@@ -803,7 +851,7 @@ md-snackbar.warning {
     width: 400px;
     height: 100%;
     z-index: 1000;
-    transition: right 0.3s ease;
+    transition: right var(--md-motion-duration-medium4) var(--md-motion-easing-emphasized-decelerate);
 }
 
 .settings-sidebar.active {
@@ -964,7 +1012,8 @@ md-snackbar.warning {
     width: 18px;
     height: 18px;
     position: relative;
-    transition: all 0.2s ease;
+    transition: border-color var(--md-motion-duration-short4) var(--md-motion-easing-standard),
+                background-color var(--md-motion-duration-short4) var(--md-motion-easing-standard);
 }
 
 .radio-label input[type="radio"]:checked {
@@ -1126,10 +1175,10 @@ md-icon-button .material-symbols-outlined {
 body.is-loading {
     opacity: 0;
     visibility: hidden;
-    transition: none; 
+    transition: none;
     animation: none;
 }
 
 body {
-    transition: opacity 0.2s ease-out;
+    transition: opacity var(--md-motion-duration-short4) var(--md-motion-easing-standard);
 }
