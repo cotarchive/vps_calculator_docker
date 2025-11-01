@@ -486,15 +486,15 @@ footer {
 }
 
 .toast {
-    min-width: 320px;
-    max-width: 360px;
-    padding: 0.9rem 1.1rem;
+    min-width: fit-content;
+    max-width: 480px;
+    padding: 1rem 1.2rem;
     border-radius: 0.75rem;
     background: rgba(28, 27, 31, 0.92);
     color: white;
     box-shadow: 0 18px 42px -12px rgba(15, 23, 42, 0.38);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.75rem;
     opacity: 0;
     transform: translateY(12px) scale(0.96);
@@ -503,16 +503,13 @@ footer {
     pointer-events: auto;
     line-height: 1.5;
     font-size: 0.95rem;
+    width: fit-content;
 }
 
-.toast::before {
-    content: '';
-    display: inline-block;
-    width: 0.45rem;
-    height: 100%;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.36);
+.toast-icon {
+    font-size: 1.25rem;
     flex-shrink: 0;
+    opacity: 0.9;
 }
 
 .toast-visible {
@@ -536,17 +533,9 @@ footer {
     color: var(--md-sys-color-on-success-container);
 }
 
-.toast.toast-success::before {
-    background: rgba(9, 105, 36, 0.4);
-}
-
 .toast.toast-error {
     background: var(--md-sys-color-error-container);
     color: var(--md-sys-color-on-error-container);
-}
-
-.toast.toast-error::before {
-    background: rgba(180, 35, 24, 0.4);
 }
 
 .toast.toast-warning {
@@ -554,17 +543,9 @@ footer {
     color: #7c2d12;
 }
 
-.toast.toast-warning::before {
-    background: rgba(194, 65, 12, 0.4);
-}
-
 .toast.toast-info {
     background: var(--card-background-color);
     color: var(--md-sys-color-on-surface);
-}
-
-.toast.toast-info::before {
-    background: rgba(103, 80, 164, 0.35);
 }
 
 [data-theme="dark"] .toast {
@@ -573,17 +554,9 @@ footer {
     box-shadow: 0 18px 42px -12px rgba(0, 0, 0, 0.45);
 }
 
-[data-theme="dark"] .toast::before {
-    background: rgba(255, 255, 255, 0.18);
-}
-
 [data-theme="dark"] .toast.toast-warning {
     background: #451a03;
     color: #fed7aa;
-}
-
-[data-theme="dark"] .toast.toast-warning::before {
-    background: rgba(255, 184, 108, 0.45);
 }
 
 
@@ -860,7 +833,7 @@ footer {
     }
 
     .sidebar-content {
-        padding: 1rem;
+        padding: 0;
     }
 
     .sidebar-actions {
@@ -1017,7 +990,7 @@ footer {
 
 .sidebar-content {
     flex: 1;
-    padding: 1.5rem;
+    padding: 0;
     overflow-y: auto;
 }
 
@@ -1033,6 +1006,159 @@ footer {
 /* 设置表单样式 */
 .sidebar-content .form-group {
     margin-bottom: 1.5rem;
+}
+
+/* ==================== Android Settings 风格样式 ==================== */
+
+/* 设置分组 */
+.settings-section {
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+/* 分组标题 */
+.settings-section-title {
+    padding: 1.5rem 1.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--md-sys-color-primary);
+    letter-spacing: 0.1px;
+    text-transform: uppercase;
+}
+
+/* 设置项 */
+.settings-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+    min-height: 64px;
+    transition: background-color var(--md-motion-duration-short4) var(--md-motion-easing-standard);
+    cursor: default;
+}
+
+.settings-item:hover {
+    background-color: var(--md-sys-color-surface-container-highest);
+}
+
+/* 设置项图标 */
+.settings-item-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.25rem;
+}
+
+.settings-item-icon .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+/* 设置项内容区域 */
+.settings-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+/* 设置项文本区域 */
+.settings-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.settings-item-label {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--md-sys-color-on-surface);
+    line-height: 1.5;
+}
+
+.settings-item-description {
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface-variant);
+    line-height: 1.43;
+}
+
+/* 设置项控件区域 */
+.settings-item-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-item-control.full-width {
+    width: 100%;
+}
+
+.settings-item-control.full-width md-outlined-text-field {
+    width: 100%;
+}
+
+.settings-item-control md-outlined-select {
+    min-width: 150px;
+}
+
+/* 水平单选按钮组 */
+.radio-group-horizontal {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface);
+    transition: color var(--md-motion-duration-short4) var(--md-motion-easing-standard);
+}
+
+.radio-option:hover {
+    color: var(--md-sys-color-primary);
+}
+
+.radio-option span {
+    user-select: none;
+}
+
+/* Material Divider 样式 */
+md-divider {
+    margin: 0.5rem 0;
+    --md-divider-color: var(--md-sys-color-outline-variant);
+}
+
+/* 响应式调整 */
+@media (max-width: 839px) {
+    .settings-section-title {
+        padding: 1rem 1rem 0.5rem;
+    }
+
+    .settings-item {
+        padding: 0.75rem 1rem;
+        min-height: 56px;
+    }
+
+    .settings-item-control md-outlined-select {
+        min-width: 120px;
+        font-size: 0.875rem;
+    }
+
+    .radio-group-horizontal {
+        gap: 1rem;
+    }
 }
 
 .radio-group-label {

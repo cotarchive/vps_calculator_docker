@@ -50,7 +50,7 @@
             padding: 0;
             box-sizing: border-box;
             transition: background-color var(--md-motion-duration-medium2) var(--md-motion-easing-standard),
-                        color var(--md-motion-duration-long2) var(--md-motion-easing-standard);
+                        color var(--md-motion-duration-medium2) var(--md-motion-easing-standard);
         }
 
         html {
@@ -409,52 +409,103 @@
             </div>
 
             <div class="sidebar-content">
-                <div class="form-group">
-                    <md-outlined-select id="imgHostType" label="图床类型">
-                        <span class="material-symbols-outlined" slot="leading-icon">dns</span>
-                        <md-select-option value="LskyPro">
-                            <div slot="headline">LskyPro</div>
-                        </md-select-option>
-                        <md-select-option value="EasyImages">
-                            <div slot="headline">EasyImages</div>
-                        </md-select-option>
-                    </md-outlined-select>
-                </div>
-                <div class="form-group">
-                    <md-outlined-text-field
-                        id="imgHostUrl"
-                        label="自定义图床地址"
-                        type="url"
-                        placeholder="https://example.com"
-                        supporting-text="请输入完整地址，包括 https://">
-                        <span class="material-symbols-outlined" slot="leading-icon">link</span>
-                    </md-outlined-text-field>
-                </div>
-                <div class="form-group">
-                    <md-outlined-text-field
-                        id="imgHostToken"
-                        label="图床 Token"
-                        type="password"
-                        placeholder="可选"
-                        supporting-text="可为空 即使用游客上传">
-                        <span class="material-symbols-outlined" slot="leading-icon">key</span>
-                        <md-icon-button slot="trailing-icon" class="toggle-password" type="button">
-                            <span class="material-symbols-outlined">visibility</span>
-                        </md-icon-button>
-                    </md-outlined-text-field>
-                </div>
-                <div class="form-group">
-                    <div class="radio-group-label">
-                        <span class="material-symbols-outlined">link</span>
-                        复制格式
+                <!-- 图床配置分组 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">图床配置</div>
+
+                    <!-- 图床类型 -->
+                    <div class="settings-item">
+                        <div class="settings-item-icon">
+                            <span class="material-symbols-outlined">dns</span>
+                        </div>
+                        <div class="settings-item-content">
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">图床类型</div>
+                                <div class="settings-item-description">选择使用的图床服务</div>
+                            </div>
+                            <div class="settings-item-control">
+                                <md-outlined-select id="imgHostType">
+                                    <md-select-option value="LskyPro" selected>
+                                        <div slot="headline">LskyPro</div>
+                                    </md-select-option>
+                                    <md-select-option value="EasyImages">
+                                        <div slot="headline">EasyImages</div>
+                                    </md-select-option>
+                                </md-outlined-select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="radio-group">
-                        <md-radio id="copyFormatMarkdown" name="copyFormat" value="markdown" checked></md-radio>
-                        <label for="copyFormatMarkdown" class="radio-label">Markdown</label>
-                        <md-radio id="copyFormatUrl" name="copyFormat" value="url"></md-radio>
-                        <label for="copyFormatUrl" class="radio-label">URL</label>
+
+                    <!-- 图床地址 -->
+                    <div class="settings-item">
+                        <div class="settings-item-icon">
+                            <span class="material-symbols-outlined">link</span>
+                        </div>
+                        <div class="settings-item-content">
+                            <div class="settings-item-control full-width">
+                                <md-outlined-text-field
+                                    id="imgHostUrl"
+                                    label="图床地址"
+                                    type="url"
+                                    placeholder="https://example.com"
+                                    supporting-text="请输入完整地址，包括 https://">
+                                </md-outlined-text-field>
+                            </div>
+                        </div>
                     </div>
-                    <div class="help-text">选择截图后复制到剪贴板的格式</div>
+
+                    <!-- 图床 Token -->
+                    <div class="settings-item">
+                        <div class="settings-item-icon">
+                            <span class="material-symbols-outlined">key</span>
+                        </div>
+                        <div class="settings-item-content">
+                            <div class="settings-item-control full-width">
+                                <md-outlined-text-field
+                                    id="imgHostToken"
+                                    label="图床 Token"
+                                    type="password"
+                                    placeholder="可选"
+                                    supporting-text="可为空 即使用游客上传">
+                                    <md-icon-button slot="trailing-icon" class="toggle-password" type="button">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                    </md-icon-button>
+                                </md-outlined-text-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <md-divider></md-divider>
+
+                <!-- 输出设置分组 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">输出设置</div>
+
+                    <!-- 复制格式 -->
+                    <div class="settings-item">
+                        <div class="settings-item-icon">
+                            <span class="material-symbols-outlined">content_copy</span>
+                        </div>
+                        <div class="settings-item-content">
+                            <div class="settings-item-text">
+                                <div class="settings-item-label">复制格式</div>
+                                <div class="settings-item-description">选择截图后复制到剪贴板的格式</div>
+                            </div>
+                            <div class="settings-item-control">
+                                <div class="radio-group-horizontal">
+                                    <label class="radio-option">
+                                        <md-radio id="copyFormatMarkdown" name="copyFormat" value="markdown" checked></md-radio>
+                                        <span>Markdown</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <md-radio id="copyFormatUrl" name="copyFormat" value="url"></md-radio>
+                                        <span>URL</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

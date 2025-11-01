@@ -844,10 +844,22 @@ const NotificationQueue = {
         toast.setAttribute('role', 'status');
         toast.setAttribute('aria-live', normalizedType === 'error' ? 'assertive' : 'polite');
 
+        const iconMap = {
+            success: 'check_circle',
+            error: 'error',
+            warning: 'warning',
+            info: 'info'
+        };
+
+        const icon = document.createElement('span');
+        icon.className = 'material-symbols-outlined toast-icon';
+        icon.textContent = iconMap[normalizedType];
+
         const messageWrapper = document.createElement('div');
         messageWrapper.className = 'toast-message';
         messageWrapper.textContent = message;
 
+        toast.appendChild(icon);
         toast.appendChild(messageWrapper);
 
         return toast;
