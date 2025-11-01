@@ -317,7 +317,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /**
  * 从 URL 参数填充表单并触发计算
- * 支持参数：currency, price, cycle, due, rate
+ * 支持参数：c/currency, p/price, y/cycle, d/due, t/transaction, r/rate
+ * 短参数名优先，向后兼容长参数名
  */
 function populateFormFromUrlAndCalc() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -325,50 +326,54 @@ function populateFormFromUrlAndCalc() {
         return; // 无参数，使用默认行为
     }
 
-    // 验证并设置币种
-    if (urlParams.has('currency')) {
-        const currency = urlParams.get('currency');
-        if (Object.values(CONSTANTS.CURRENCY).includes(currency)) {
-            DOMCache.currency.value = currency;
+    // 辅助函数：获取参数值（优先使用短参数名，向后兼容长参数名）
+    const getParam = (shortName, longName) => {
+        return urlParams.get(shortName) || urlParams.get(longName);
+    };
+
+    // 验证并设置币种 (c = currency)
+    const currency = getParam('c', 'currency');
+    if (currency && Object.values(CONSTANTS.CURRENCY).includes(currency)) {
+        DOMCache.currency.value = currency;
+    }
+
+    // 验证并设置价格 (p = price)
+    const price = getParam('p', 'price');
+    if (price && validateInput(price, 'number') && parseFloat(price) > 0) {
+        DOMCache.amount.value = price;
+    }
+
+    // 验证并设置周期 (y = cycle)
+    const cycle = getParam('y', 'cycle');
+    if (cycle && Object.values(CONSTANTS.CYCLE).includes(parseInt(cycle))) {
+        DOMCache.cycle.value = cycle;
+    }
+
+    // 验证并设置到期日期 (d = due)
+    const expiryDate = getParam('d', 'due');
+    if (expiryDate && /^\d{8}$/.test(expiryDate)) {
+        const formattedDate = `${expiryDate.substring(0, 4)}-${expiryDate.substring(4, 6)}-${expiryDate.substring(6, 8)}`;
+        if (validateInput(formattedDate, 'date')) {
+            DOMCache.expiryDate.value = formattedDate;
         }
     }
 
-    // 验证并设置价格
-    if (urlParams.has('price')) {
-        const price = urlParams.get('price');
-        if (validateInput(price, 'number') && parseFloat(price) > 0) {
-            DOMCache.amount.value = price;
-        }
-    }
-
-    // 验证并设置周期
-    if (urlParams.has('cycle')) {
-        const cycle = urlParams.get('cycle');
-        if (Object.values(CONSTANTS.CYCLE).includes(parseInt(cycle))) {
-            DOMCache.cycle.value = cycle;
-        }
-    }
-
-    // 验证并设置到期日期
-    if (urlParams.has('due')) {
-        const expiryDate = urlParams.get('due');
-        if (/^\d{8}$/.test(expiryDate)) {
-            const formattedDate = `${expiryDate.substring(0, 4)}-${expiryDate.substring(4, 6)}-${expiryDate.substring(6, 8)}`;
-            if (validateInput(formattedDate, 'date')) {
-                DOMCache.expiryDate.value = formattedDate;
-            }
+    // 验证并设置交易日期 (t = transaction)
+    const transactionDate = getParam('t', 'transaction');
+    if (transactionDate && /^\d{8}$/.test(transactionDate)) {
+        const formattedDate = `${transactionDate.substring(0, 4)}-${transactionDate.substring(4, 6)}-${transactionDate.substring(6, 8)}`;
+        if (validateInput(formattedDate, 'date')) {
+            DOMCache.transactionDate.value = formattedDate;
         }
     }
 
     const fetchPromise = fetchExchangeRate(true);
 
     fetchPromise.then(() => {
-        // 验证并设置自定义汇率
-        if (urlParams.has('rate')) {
-            const rate = urlParams.get('rate');
-            if (validateInput(rate, 'number') && parseFloat(rate) > 0) {
-                DOMCache.customRate.value = rate;
-            }
+        // 验证并设置自定义汇率 (r = rate)
+        const rate = getParam('r', 'rate');
+        if (rate && validateInput(rate, 'number') && parseFloat(rate) > 0) {
+            DOMCache.customRate.value = rate;
         }
         setTimeout(() => {
             calculateAndSend();
@@ -1301,12 +1306,17 @@ function copyLink() {
     const price = document.getElementById('amount').value;
     const cycle = document.getElementById('cycle').value;
     const expiryDate = document.getElementById('expiryDate').value;
+    const transactionDate = document.getElementById('transactionDate').value;
+    const customRate = document.getElementById('customRate').value;
 
     const params = new URLSearchParams();
-    if (currency) params.set('currency', currency);
-    if (price) params.set('price', price);
-    if (cycle) params.set('cycle', cycle);
-    if (expiryDate) params.set('due', expiryDate.replace(/-/g, ''));
+    // 使用短参数名优化链接长度
+    if (currency) params.set('c', currency);
+    if (price) params.set('p', price);
+    if (cycle) params.set('y', cycle);
+    if (expiryDate) params.set('d', expiryDate.replace(/-/g, ''));
+    if (transactionDate) params.set('t', transactionDate.replace(/-/g, ''));
+    if (customRate) params.set('r', customRate);
 
     const url = new URL(window.location.href);
     url.search = params.toString();
