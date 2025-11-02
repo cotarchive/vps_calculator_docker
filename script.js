@@ -418,6 +418,9 @@ function initTheme() {
 
     // 切换主题
     themeToggle.addEventListener('click', function() {
+        // 添加过渡类以确保所有元素同步切换
+        document.documentElement.classList.add('theme-transitioning');
+
         let theme;
         if (document.documentElement.getAttribute('data-theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'light');
@@ -431,6 +434,11 @@ function initTheme() {
 
         // 保存主题设置到本地存储
         safeLocalStorage(CONSTANTS.STORAGE_KEYS.THEME, theme);
+
+        // 300ms后移除过渡类，恢复正常动画
+        setTimeout(() => {
+            document.documentElement.classList.remove('theme-transitioning');
+        }, 300);
     });
 }
 
