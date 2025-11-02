@@ -713,6 +713,14 @@ function calculateAndSend() {
  * @param {Object} data - 数据对象
  */
 function updateResults(result, data) {
+    // 移除所有结果数值的模糊效果
+    DOMCache.resultDate.classList.remove('result-value-blurred');
+    DOMCache.resultExpiry.classList.remove('result-value-blurred');
+    DOMCache.resultPrice.classList.remove('result-value-blurred');
+    DOMCache.resultForeignRate.classList.remove('result-value-blurred');
+    DOMCache.resultDays.classList.remove('result-value-blurred');
+    DOMCache.resultValue.classList.remove('result-value-blurred');
+
     DOMCache.resultDate.innerText = data.transactionDate;
     DOMCache.resultForeignRate.innerText = data.customRate.toFixed(3);
 
@@ -727,6 +735,18 @@ function updateResults(result, data) {
 
     // 显示默认的周期价格
     DOMCache.resultPrice.innerText = `${price.toFixed(2)} 人民币/${cycleText}`;
+
+    // 控制+2标签的显示：只有当价格不为0时才显示
+    const priceBadge = document.getElementById('priceBadge');
+    if (priceBadge) {
+        priceBadge.style.display = (price > 0) ? 'inline-flex' : 'none';
+    }
+
+    // 标记已计算，允许悬浮显示价格详情
+    const priceCard = document.querySelector('.result-item-expandable');
+    if (priceCard) {
+        priceCard.classList.add('calculated');
+    }
 
     // 生成详细价格信息
     const priceDetailContainer = document.getElementById('resultPriceDetail');

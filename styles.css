@@ -1445,6 +1445,13 @@ body {
 
 /* ==================== 价格悬停浮层样式 ==================== */
 
+/* 未计算时的模糊效果 */
+.result-value-blurred {
+    filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+}
+
 /* Material Design 3 数字徽章 */
 .price-badge {
     display: inline-flex;
@@ -1513,8 +1520,8 @@ body {
     isolation: isolate;
 }
 
-/* 悬停时显示浮层 */
-.result-item-expandable:hover .result-value-detail {
+/* 悬停时显示浮层 - 只有计算后才显示 */
+.result-item-expandable.calculated:hover .result-value-detail {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);

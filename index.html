@@ -323,7 +323,7 @@
                                 <span class="material-symbols-outlined">calendar_today</span>
                                 交易日期
                             </div>
-                            <div id="resultDate" class="result-value md-typescale-body-large">0000-00-00</div>
+                            <div id="resultDate" class="result-value md-typescale-body-large result-value-blurred">0000-00-00</div>
                         </div>
                     </md-card>
                     <md-card class="result-item">
@@ -332,7 +332,7 @@
                                 <span class="material-symbols-outlined">event_available</span>
                                 到期日期
                             </div>
-                            <div id="resultExpiry" class="result-value md-typescale-body-large">0000-00-00</div>
+                            <div id="resultExpiry" class="result-value md-typescale-body-large result-value-blurred">0000-00-00</div>
                         </div>
                     </md-card>
                     <md-card class="result-item result-item-expandable">
@@ -340,10 +340,10 @@
                             <div class="result-label">
                                 <span class="material-symbols-outlined">currency_yen</span>
                                 续费价格
-                                <span class="price-badge" title="悬停查看更多价格">+2</span>
+                                <span id="priceBadge" class="price-badge" title="悬停查看更多价格" style="display: none;">+2</span>
                             </div>
                             <div class="result-value-container">
-                                <div id="resultPrice" class="result-value md-typescale-body-large">0.00 人民币/年</div>
+                                <div id="resultPrice" class="result-value md-typescale-body-large result-value-blurred">0.00 人民币/年</div>
                                 <div id="resultPriceDetail" class="result-value-detail">
                                     <!-- 详细价格信息，鼠标悬停时显示 -->
                                 </div>
@@ -356,7 +356,7 @@
                                 <span class="material-symbols-outlined">sync_alt</span>
                                 外币汇率
                             </div>
-                            <div id="resultForeignRate" class="result-value md-typescale-body-large">0.00</div>
+                            <div id="resultForeignRate" class="result-value md-typescale-body-large result-value-blurred">0.00</div>
                         </div>
                     </md-card>
                     <md-card class="result-item">
@@ -365,7 +365,7 @@
                                 <span class="material-symbols-outlined">schedule</span>
                                 剩余天数
                             </div>
-                            <div id="resultDays" class="result-value md-typescale-body-large">0</div>
+                            <div id="resultDays" class="result-value md-typescale-body-large result-value-blurred">0</div>
                         </div>
                     </md-card>
                     <md-card class="result-item highlight">
@@ -374,7 +374,7 @@
                                 <span class="material-symbols-outlined">monetization_on</span>
                                 剩余价值
                             </div>
-                            <div id="resultValue" class="result-value md-typescale-headline-small">0.000 元</div>
+                            <div id="resultValue" class="result-value md-typescale-headline-small result-value-blurred">0.000 元</div>
                         </div>
                     </md-card>
                 </div>
