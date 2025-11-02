@@ -45,8 +45,7 @@ const CONSTANTS = {
     // LocalStorage 键
     STORAGE_KEYS: {
         VERSION: 'app_version',
-        THEME: 'theme',
-        IMG_HOST: 'imgHostSettings'
+        THEME: 'theme'
     }
 };
 
@@ -57,24 +56,14 @@ const CONSTANTS = {
         if (storedVersion !== APP_VERSION) {
             console.log('检测到新版本，清除缓存...');
             const theme = localStorage.getItem(CONSTANTS.STORAGE_KEYS.THEME);
-            const imgHostSettings = localStorage.getItem(CONSTANTS.STORAGE_KEYS.IMG_HOST);
             localStorage.clear();
             if (theme) localStorage.setItem(CONSTANTS.STORAGE_KEYS.THEME, theme);
-            if (imgHostSettings) localStorage.setItem(CONSTANTS.STORAGE_KEYS.IMG_HOST, imgHostSettings);
             localStorage.setItem(CONSTANTS.STORAGE_KEYS.VERSION, APP_VERSION);
         }
     } catch (error) {
         console.error('LocalStorage 操作失败:', error);
     }
 })();
-
-// ==================== 图床配置 ====================
-const imgHost = {
-    type: "LskyPro", // 图床类型, 仅支持 LskyPro / EasyImages
-    url: "https://image.dooo.ng", // 图床地址, 带上协议头
-    token: "", // LskyPro 可为空则使用游客上传, 在 /user/tokens 生成
-    copyFormat: "markdown" // 默认为URL格式
-};
 
 // ==================== DOM 元素缓存 ====================
 let DOMCache = {};
@@ -96,10 +85,9 @@ function initDOMCache() {
 
         // 按钮
         calculateBtn: document.getElementById('calculateBtn'),
+        copyMarkdownBtn: document.getElementById('copyMarkdownBtn'),
         copyLinkBtn: document.getElementById('copyLinkBtn'),
-        screenshotBtn: document.getElementById('screenshotBtn'),
         themeToggle: document.getElementById('themeToggle'),
-        settingsToggle: document.getElementById('settingsToggle'),
 
         // 结果显示元素
         resultDate: document.getElementById('resultDate'),
@@ -108,20 +96,7 @@ function initDOMCache() {
         resultDays: document.getElementById('resultDays'),
         resultExpiry: document.getElementById('resultExpiry'),
         resultValue: document.getElementById('resultValue'),
-        calcResult: document.getElementById('calcResult'),
-
-        // 设置相关
-        settingsSidebar: document.getElementById('settingsSidebar'),
-        sidebarOverlay: document.getElementById('sidebarOverlay'),
-        closeSidebar: document.getElementById('closeSidebar'),
-        saveSettings: document.getElementById('saveSettings'),
-        resetSettings: document.getElementById('resetSettings'),
-        imgHostType: document.getElementById('imgHostType'),
-        imgHostUrl: document.getElementById('imgHostUrl'),
-        imgHostToken: document.getElementById('imgHostToken'),
-        copyFormatMarkdown: document.getElementById('copyFormatMarkdown'),
-        copyFormatUrl: document.getElementById('copyFormatUrl'),
-        togglePassword: document.querySelector('.toggle-password')
+        calcResult: document.getElementById('calcResult')
     };
 }
 
@@ -256,9 +231,6 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchExchangeRate();
         setDefaultTransactionDate();
 
-        // 初始化图床设置
-        initSettings();
-
         // 等待 Material Web 组件完全加载后添加事件监听器
         setTimeout(() => {
             attachEventListeners();
@@ -279,39 +251,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (DOMCache.calculateBtn) {
             DOMCache.calculateBtn.addEventListener('click', calculateAndSend);
         }
+        if (DOMCache.copyMarkdownBtn) {
+            DOMCache.copyMarkdownBtn.addEventListener('click', copyResultAsMarkdown);
+        }
         if (DOMCache.copyLinkBtn) {
             DOMCache.copyLinkBtn.addEventListener('click', copyLink);
         }
-        if (DOMCache.screenshotBtn) {
-            DOMCache.screenshotBtn.addEventListener('click', captureAndUpload);
-        }
-
-        // 设置相关事件
-        if (DOMCache.settingsToggle) {
-            DOMCache.settingsToggle.addEventListener('click', openSettingsSidebar);
-        }
-        if (DOMCache.closeSidebar) {
-            DOMCache.closeSidebar.addEventListener('click', closeSettingsSidebar);
-        }
-        if (DOMCache.sidebarOverlay) {
-            DOMCache.sidebarOverlay.addEventListener('click', closeSettingsSidebar);
-        }
-        if (DOMCache.saveSettings) {
-            DOMCache.saveSettings.addEventListener('click', saveSettings);
-        }
-        if (DOMCache.resetSettings) {
-            DOMCache.resetSettings.addEventListener('click', resetSettings);
-        }
-        if (DOMCache.togglePassword) {
-            DOMCache.togglePassword.addEventListener('click', togglePasswordVisibility);
-        }
-
-        // ESC 键关闭侧边栏
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeSettingsSidebar();
-            }
-        });
     }
 });
 
@@ -1027,341 +972,6 @@ function showNotification(message, type = 'info') {
     NotificationQueue.add(message, type, CONSTANTS.NOTIFICATION_DURATION);
 }
 
-/**
- * 捕获计算结果并上传到图床
- */
-function captureAndUpload() {
-    // 检查是否有计算结果
-    const resultValue = DOMCache.resultValue;
-    if (!resultValue || resultValue.textContent.trim() === '0.000 元') {
-        showNotification('请先计算剩余价值再截图', 'error');
-        return;
-    }
-
-    // 显示加载中通知
-    showNotification('正在生成截图...', 'info');
-
-    // 使用 html2canvas 捕获结果区域
-    const devicePixelRatio = window.devicePixelRatio || 1;
-    const scale = Math.min(devicePixelRatio, 2); // 最大 2 倍缩放
-
-    html2canvas(DOMCache.calcResult, {
-        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card-background-color'),
-        scale: scale,
-        logging: false,
-        useCORS: true
-    }).then(function(canvas) {
-        showNotification('截图生成成功，正在上传...', 'info');
-
-        // 转换为 base64 数据 URL
-        const imageData = canvas.toDataURL('image/png');
-
-        // 上传到选定的图床
-        uploadImage(imageData);
-    }).catch(function(error) {
-        console.error('截图生成失败:', error);
-        showNotification('截图生成失败，请重试', 'error');
-    });
-}
-
-/**
- * 将图片上传到配置的图床
- * @param {string} imageData - base64 格式的图像数据
- */
-function uploadImage(imageData) {
-    // 从 base64 数据创建 Blob
-    const byteString = atob(imageData.split(',')[1]);
-    const mimeType = imageData.split(',')[0].split(':')[1].split(';')[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    
-    for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    
-    const blob = new Blob([ab], {type: mimeType});
-    const file = new File([blob], "calculator-result.png", {type: mimeType});
-    
-    // 根据图床类型选择不同的上传方法
-    switch(imgHost.type) {
-        case 'LskyPro':
-            uploadToLskyPro(file);
-            break;
-        case 'EasyImages':
-            uploadToEasyImages(file);
-            break;
-        default:
-            showNotification(`不支持的图床类型: ${imgHost.type}，请设置为 LskyPro 或 EasyImages`, 'error');
-    }
-}
-
-/**
- * 上传到 LskyPro 图床
- * 代码参考: https://greasyfork.org/zh-CN/scripts/487553-nodeseek-%E7%BC%96%E8%BE%91%E5%99%A8%E5%A2%9E%E5%BC%BA
- * 
- * @param {File} file - 要上传的文件
- */
-function uploadToLskyPro(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const headers = {
-        'Accept': 'application/json'
-    };
-    
-    if (imgHost.token) {
-        headers['Authorization'] = `Bearer ${imgHost.token}`;
-    }
-    
-    fetch(`${imgHost.url}/api/v1/upload`, {
-        method: 'POST',
-        headers: headers,
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === true && data.data && data.data.links) {
-            // 获取图片URL
-            const imageUrl = data.data.links.url;
-            let clipboardText = imageUrl;
-            
-            // 如果设置为Markdown格式，则生成Markdown格式的文本
-            if (imgHost.copyFormat === 'markdown') {
-                clipboardText = `![剩余价值计算结果](${imageUrl})`;
-            }
-            
-            // 复制到剪贴板
-            copyToClipboard(clipboardText);
-            
-            // 显示通知，指明使用了哪种格式
-            const formatText = imgHost.copyFormat === 'markdown' ? 'Markdown格式' : '链接';
-            showNotification(`截图上传成功，${formatText}已复制到剪贴板！`, 'success');
-        } else {
-            showNotification('图片上传失败', 'error');
-            console.error('上传响应异常:', data);
-        }
-    })
-    .catch(error => {
-        console.error('上传图片失败:', error);
-        showNotification('上传图片失败，请重试', 'error');
-    });
-}
-
-/**
- * 上传到 EasyImages 图床 
- * 代码参考: https://greasyfork.org/zh-CN/scripts/487553-nodeseek-%E7%BC%96%E8%BE%91%E5%99%A8%E5%A2%9E%E5%BC%BA
- * 
- * @param {File} file - 要上传的文件
- */
-function uploadToEasyImages(file) {
-    const formData = new FormData();
-    let url = imgHost.url;
-    
-    if (imgHost.token) {
-        // 使用后端API
-        url += '/api/index.php';
-        formData.append('token', imgHost.token);
-        formData.append('image', file);
-    } else {
-        // 使用前端API
-        url += '/app/upload.php';
-        formData.append('file', file);
-        formData.append('sign', Math.floor(Date.now() / 1000));
-    }
-    
-    fetch(url, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.code === 200 && data.url) {
-            // 获取图片URL
-            const imageUrl = data.url;
-            let clipboardText = imageUrl;
-            
-            // 如果设置为Markdown格式，则生成Markdown格式的文本
-            if (imgHost.copyFormat === 'markdown') {
-                clipboardText = `![剩余价值计算结果](${imageUrl})`;
-            }
-            
-            // 复制到剪贴板
-            copyToClipboard(clipboardText);
-            
-            // 显示通知，指明使用了哪种格式
-            const formatText = imgHost.copyFormat === 'markdown' ? 'Markdown格式' : '链接';
-            showNotification(`截图上传成功，${formatText}已复制到剪贴板！`, 'success');
-        } else {
-            showNotification('图片上传失败', 'error');
-            console.error('上传响应异常:', data);
-        }
-    })
-    .catch(error => {
-        console.error('上传图片失败:', error);
-        showNotification('上传图片失败，请重试', 'error');
-    });
-}
-
-
-
-
-/**
- * 初始化设置界面
- * 从 LocalStorage 加载保存的图床设置
- */
-function initSettings() {
-    const savedSettings = safeLocalStorage(CONSTANTS.STORAGE_KEYS.IMG_HOST);
-
-    try {
-        if (savedSettings) {
-            // 不是第一次启动，加载保存的设置
-            const parsedSettings = JSON.parse(savedSettings);
-
-            imgHost.type = parsedSettings.type || imgHost.type;
-            imgHost.url = parsedSettings.url || imgHost.url;
-            imgHost.token = parsedSettings.token || imgHost.token;
-            imgHost.copyFormat = parsedSettings.copyFormat || imgHost.copyFormat;
-        }
-
-        // 更新 UI
-        if (DOMCache.imgHostType) DOMCache.imgHostType.value = imgHost.type;
-        if (DOMCache.imgHostUrl) DOMCache.imgHostUrl.value = imgHost.url;
-        if (DOMCache.imgHostToken) DOMCache.imgHostToken.value = imgHost.token || '';
-
-        if (imgHost.copyFormat === 'markdown') {
-            if (DOMCache.copyFormatMarkdown) DOMCache.copyFormatMarkdown.checked = true;
-        } else {
-            if (DOMCache.copyFormatUrl) DOMCache.copyFormatUrl.checked = true;
-        }
-    } catch (error) {
-        console.error('初始化设置失败:', error);
-        showNotification('加载设置失败，使用默认配置', 'warning');
-    }
-}
-
-/**
- * 打开设置侧边栏
- */
-function openSettingsSidebar() {
-    const sidebar = document.getElementById('settingsSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-
-    // 防止背景滚动
-    document.body.style.overflow = 'hidden';
-}
-
-/**
- * 关闭设置侧边栏
- */
-function closeSettingsSidebar() {
-    const sidebar = document.getElementById('settingsSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-
-    // 恢复背景滚动
-    document.body.style.overflow = '';
-}
-
-/**
- * 保存设置 - 适配 Material Web 组件
- */
-function saveSettings() {
-    const type = DOMCache.imgHostType.value;
-    const url = DOMCache.imgHostUrl.value;
-    const token = DOMCache.imgHostToken.value;
-
-    // 获取选中的复制格式 - 适配 Material Web md-radio 组件
-    let copyFormat = 'markdown';
-    const markdownRadio = DOMCache.copyFormatMarkdown;
-    const urlRadio = DOMCache.copyFormatUrl;
-
-    if (markdownRadio && markdownRadio.checked) {
-        copyFormat = 'markdown';
-    } else if (urlRadio && urlRadio.checked) {
-        copyFormat = 'url';
-    }
-
-    // 验证 URL
-    if (!validateInput(url, '')) {
-        showNotification('图床地址不能为空', 'error');
-        return;
-    }
-
-    if (!validateInput(url, 'url')) {
-        showNotification('图床地址格式不正确，必须包含 http:// 或 https://', 'error');
-        return;
-    }
-
-    // 更新 imgHost 对象
-    imgHost.type = type;
-    imgHost.url = url;
-    imgHost.token = token;
-    imgHost.copyFormat = copyFormat;
-
-    const saved = safeLocalStorage(CONSTANTS.STORAGE_KEYS.IMG_HOST, imgHost);
-    if (saved) {
-        showNotification('设置已保存', 'success');
-        closeSettingsSidebar();
-    } else {
-        showNotification('设置保存失败，可能是浏览器限制', 'error');
-    }
-}
-
-
-function resetSettings() {
-    if (confirm('确定要恢复默认设置吗？')) {
-        // 使用对象属性更新
-        imgHost.type = "LskyPro";
-        imgHost.url = "https://image.dooo.ng";
-        imgHost.token = "";
-        imgHost.copyFormat = "markdown";
-        
-        // 更新表单值
-        document.getElementById('imgHostType').value = imgHost.type;
-        document.getElementById('imgHostUrl').value = imgHost.url;
-        document.getElementById('imgHostToken').value = imgHost.token;
-        document.getElementById('copyFormatMarkdown').checked = true;
-        
-        // 保存到本地存储
-        try {
-            localStorage.setItem('imgHostSettings', JSON.stringify(imgHost));
-            showNotification('已恢复默认设置', 'success');
-        } catch (error) {
-            showNotification('设置重置失败，可能是浏览器限制', 'error');
-        }
-    }
-}
-
-
-function togglePasswordVisibility() {
-    const passwordInput = document.getElementById('imgHostToken');
-    const toggleBtn = document.querySelector('.toggle-password .material-symbols-outlined');
-
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleBtn.textContent = 'visibility_off';
-    } else {
-        passwordInput.type = 'password';
-        toggleBtn.textContent = 'visibility';
-    }
-}
-
-
 function triggerConfetti() {
     confetti({
         particleCount: 15,
@@ -1394,6 +1004,40 @@ function getCycleText(cycle) {
         case 60: return '五年';
         default: return '未知周期';
     }
+}
+
+/**
+ * 复制计算结果为Markdown格式
+ */
+function copyResultAsMarkdown() {
+    // 检查是否有计算结果
+    const resultValue = DOMCache.resultValue;
+    if (!resultValue || resultValue.textContent.trim() === '0.000 元' || resultValue.classList.contains('result-value-blurred')) {
+        showNotification('请先计算剩余价值', 'error');
+        return;
+    }
+
+    // 获取所有结果数据
+    const transactionDate = DOMCache.resultDate.textContent;
+    const expiryDate = DOMCache.resultExpiry.textContent;
+    const price = DOMCache.resultPrice.textContent;
+    const rate = DOMCache.resultForeignRate.textContent;
+    const days = DOMCache.resultDays.textContent;
+    const value = DOMCache.resultValue.textContent.replace(/\s*content_copy\s*$/, '').trim();
+
+    // 生成Markdown表格
+    const markdown = `## 剩余价值计算结果
+
+| 项目 | 数值 |
+|------|------|
+| 交易日期 | ${transactionDate} |
+| 到期日期 | ${expiryDate} |
+| 续费价格 | ${price} |
+| 外币汇率 | ${rate} |
+| 剩余天数 | ${days} 天 |
+| 剩余价值 | ${value} |`;
+
+    copyToClipboard(markdown);
 }
 
 function copyLink() {

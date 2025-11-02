@@ -33,7 +33,6 @@
 | 🎯 **精准计算** | 自动计算剩余天数和价值 |
 | 🎨 **全新界面** | 采用 Material Design 3 设计语言
 | 🐳 **容器化部署** | 支持 Docker 一键部署
-| 📷 **截图功能** | 一键截图并上传到图床
 | 🌓 **主题模式** | 支持亮色/暗色模式切换
 
 
@@ -70,8 +69,6 @@ docker run -d --name=jsq -p 8089:80 bobby567/calculator:latest
 感谢以下项目和个人的贡献：
 
 - [pengzhile](https://linux.do/t/topic/227730/26) - 实时汇率 API 代码
-- [Dooongの公益图床](https://www.nodeseek.com/post-43196-1) - 提供图床服务
-- [NodeSeek 编辑器增强脚本](https://www.nodeseek.com/post-74493-1) - 图床上传代码参考
 - mjj - 大鸡腿
 
 ## 📄 许可协议
