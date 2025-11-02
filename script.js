@@ -716,10 +716,77 @@ function updateResults(result, data) {
     DOMCache.resultDate.innerText = data.transactionDate;
     DOMCache.resultForeignRate.innerText = data.customRate.toFixed(3);
 
-    // 计算年化价格
+    // 计算价格信息
     const price = parseFloat(data.price);
-    const cycleText = getCycleText(data.cycle);
+    const cycle = parseInt(data.cycle);
+    const cycleText = getCycleText(cycle);
+
+    // 计算月付和年付价格
+    const monthlyPrice = price / cycle;
+    const yearlyPrice = monthlyPrice * 12;
+
+    // 显示默认的周期价格
     DOMCache.resultPrice.innerText = `${price.toFixed(2)} 人民币/${cycleText}`;
+
+    // 生成详细价格信息
+    const priceDetailContainer = document.getElementById('resultPriceDetail');
+    if (priceDetailContainer) {
+        let detailHTML = '';
+
+        // 计算季付价格
+        const quarterlyPrice = monthlyPrice * 3;
+
+        // 实际周期价格（高亮显示）
+        detailHTML += `<div class="price-detail-item current-cycle">
+            <span class="price-detail-label">${cycleText}付</span>
+            <span class="price-detail-value">${price.toFixed(2)} 元</span>
+        </div>`;
+
+        // 根据实际周期决定显示哪些参考周期
+        if (cycle === 1) {
+            // 月付 → 显示季付和年付
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">季付</span>
+                <span class="price-detail-value">${quarterlyPrice.toFixed(2)} 元</span>
+            </div>`;
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">年付</span>
+                <span class="price-detail-value">${yearlyPrice.toFixed(2)} 元</span>
+            </div>`;
+        } else if (cycle === 12) {
+            // 年付 → 显示月付和季付
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">月付</span>
+                <span class="price-detail-value">${monthlyPrice.toFixed(2)} 元</span>
+            </div>`;
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">季付</span>
+                <span class="price-detail-value">${quarterlyPrice.toFixed(2)} 元</span>
+            </div>`;
+        } else if (cycle === 3) {
+            // 季付 → 显示月付和年付
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">月付</span>
+                <span class="price-detail-value">${monthlyPrice.toFixed(2)} 元</span>
+            </div>`;
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">年付</span>
+                <span class="price-detail-value">${yearlyPrice.toFixed(2)} 元</span>
+            </div>`;
+        } else {
+            // 其他周期（半年付、两年付等） → 显示月付和年付
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">月付</span>
+                <span class="price-detail-value">${monthlyPrice.toFixed(2)} 元</span>
+            </div>`;
+            detailHTML += `<div class="price-detail-item">
+                <span class="price-detail-label">年付</span>
+                <span class="price-detail-value">${yearlyPrice.toFixed(2)} 元</span>
+            </div>`;
+        }
+
+        priceDetailContainer.innerHTML = detailHTML;
+    }
 
     DOMCache.resultDays.innerText = data.time;
     DOMCache.resultExpiry.innerText = data.expiryDate;

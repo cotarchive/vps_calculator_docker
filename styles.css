@@ -1442,3 +1442,147 @@ body.is-loading {
 body {
     transition: opacity var(--md-motion-duration-short4) var(--md-motion-easing-standard);
 }
+
+/* ==================== 价格悬停浮层样式 ==================== */
+
+/* Material Design 3 数字徽章 */
+.price-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: 0.5rem;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* 暗色主题徽章 */
+[data-theme="dark"] .price-badge {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+
+/* 可展开的结果项 */
+.result-item-expandable {
+    cursor: pointer;
+    overflow: visible !important;
+    position: relative;
+    z-index: 1;
+}
+
+.result-item-expandable:hover {
+    z-index: 999;
+}
+
+.result-item-expandable .result-content {
+    overflow: visible !important;
+}
+
+/* 价格值容器 */
+.result-value-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* 价格详细信息 - 浮层样式 */
+.result-value-detail {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: #FFFFFF;
+    border: 1px solid #CCD0D8;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized-decelerate),
+                visibility var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized-decelerate),
+                transform var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized-decelerate);
+    z-index: 1000;
+    pointer-events: none;
+    isolation: isolate;
+}
+
+/* 悬停时显示浮层 */
+.result-item-expandable:hover .result-value-detail {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* 详细价格项样式 */
+.price-detail-item {
+    padding: 0.5rem 0.75rem;
+    margin: 0.25rem 0;
+    border-radius: 8px;
+    background: #F4F7F7;
+    font-size: 0.9rem;
+    color: #505462;
+    transition: background-color var(--md-motion-duration-short4) var(--md-motion-easing-standard);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 当前选择的周期高亮 */
+.price-detail-item.current-cycle {
+    background: #B8CFCE;
+    color: #00131A;
+    font-weight: 600;
+}
+
+/* 价格标签 */
+.price-detail-label {
+    font-size: 0.875rem;
+}
+
+/* 价格值 */
+.price-detail-value {
+    font-weight: 500;
+}
+
+/* 高亮项的价格值 */
+.price-detail-item.current-cycle .price-detail-value {
+    font-weight: 600;
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .result-value-detail {
+    background: #1F2028;
+    border-color: #505462;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .price-detail-item {
+    background: #292B33;
+    color: #CACDD9;
+}
+
+[data-theme="dark"] .price-detail-item.current-cycle {
+    background: #4A5B63;
+    color: #D8EAE9;
+}
+
+/* 响应式调整 */
+@media (max-width: 839px) {
+    .result-value-detail {
+        margin-top: 0.25rem;
+        padding: 0.5rem;
+    }
+
+    .price-detail-item {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+}
